@@ -854,6 +854,7 @@ glb_router_print_info (glb_router_t* router, char* buf, size_t buf_len)
     int    total_conns;
     int    n_dst;
     int    i;
+    double  uw;
   
 
     len += snprintf(buf + len, buf_len - len, "{ \n  \"Router\": [  ");
@@ -868,20 +869,24 @@ glb_router_print_info (glb_router_t* router, char* buf, size_t buf_len)
     for (i = 0; i < router->n_dst; i++) {
         router_dst_t* d = &router->dst[i];
         glb_sockaddr_str_t addr = glb_sockaddr_to_astr (&d->dst.addr);
-        
-        
+
+        if (d->dst.weight == 0) {
+            uw=0;
+        }else {
+            uw=1.0 - (d->usage/d->dst.weight);
+        }
         if (router_uses_map (router)) {
             len += snprintf (buf + len, buf_len - len,
-                             "{ \n\t\"address\": \"%s\", \"weight\": %8.3f, \"usage\": \"%7.3f\", \"map\": %7.3f, \"conns\": %5d},\n",
+                             "{ \n\t\"address\": \"%s\", \"weight\": %8.3f, \"usage\": %7.3f, \"map\": %7.3f, \"conns\": %5d},\n",
                              addr.str,
-                             d->dst.weight, 1.0 - (d->usage/d->dst.weight),
+                             d->dst.weight, uw ,
                              d->map, d->conns);
         }
         else {
             len += snprintf (buf + len, buf_len - len,
-                             "{ \n\t\"address\": \"%s\", \"weight\": %8.3f, \"usage\": \"%7.3f\", \"map\": null,  \"conns\": %5d},\n",
+                             "{ \n\t\"address\": \"%s\", \"weight\": %8.3f, \"usage\": %7.3f, \"map\": null,  \"conns\": %5d},\n",
                              addr.str,
-                             d->dst.weight, 1.0 - (d->usage/d->dst.weight),
+                             d->dst.weight, uw,
                              d->conns);
         }
 
