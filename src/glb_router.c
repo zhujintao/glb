@@ -854,10 +854,10 @@ glb_router_print_info (glb_router_t* router, char* buf, size_t buf_len)
     int    total_conns;
     int    n_dst;
     int    i;
+  
 
-    len += snprintf(buf + len, buf_len - len, "Router:\n"
-                    "------------------------------------------------------\n"
-                    "        Address       :   weight   usage    map  conns\n");
+    len += snprintf(buf + len, buf_len - len, "{ \n  \"Router\": [");
+    
     if (len == buf_len) {
         buf[len - 1] = '\0';
         return (len - 1);
@@ -868,17 +868,18 @@ glb_router_print_info (glb_router_t* router, char* buf, size_t buf_len)
     for (i = 0; i < router->n_dst; i++) {
         router_dst_t* d = &router->dst[i];
         glb_sockaddr_str_t addr = glb_sockaddr_to_astr (&d->dst.addr);
-
+        
+        
         if (router_uses_map (router)) {
             len += snprintf (buf + len, buf_len - len,
-                             "%s : %8.3f %7.3f %7.3f %5d\n",
+                             "{ \n\t\"address\": \"%s\", \"weight\": %8.3f, \"usage\": %7.3f, \"map\": %7.3f, \"conns\": %5d},\n",
                              addr.str,
                              d->dst.weight, 1.0 - (d->usage/d->dst.weight),
                              d->map, d->conns);
         }
         else {
             len += snprintf (buf + len, buf_len - len,
-                             "%s : %8.3f %7.3f    N/A  %5d\n",
+                             "{ \n\t\"address\": \"%s\", \"weight\": %8.3f, \"usage\": %7.3f, \"map\": null,  \"conns\": %5d},\n",
                              addr.str,
                              d->dst.weight, 1.0 - (d->usage/d->dst.weight),
                              d->conns);
@@ -891,14 +892,18 @@ glb_router_print_info (glb_router_t* router, char* buf, size_t buf_len)
         }
     }
 
+    
+   
+   
+
+   
     n_dst = router->n_dst;
     total_conns = router->conns;
 
     GLB_MUTEX_UNLOCK (&router->lock);
 
-    len += snprintf (buf + len, buf_len - len,
-                     "------------------------------------------------------\n"
-                     "Destinations: %d, total connections: %d of %d max\n",
+    len += snprintf (buf + len-2, buf_len - len,
+                     "\n], \n  \"Destinations\": %d,\n  \"Totalconnections\": %d,\n  \"Max\": %d \n}",
                      n_dst, total_conns, router->cnf->max_conn);
 
     if (len == buf_len) {
