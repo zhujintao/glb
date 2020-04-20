@@ -856,7 +856,7 @@ glb_router_print_info (glb_router_t* router, char* buf, size_t buf_len)
     int    i;
   
 
-    len += snprintf(buf + len, buf_len - len, "{ \n  \"Router\": [");
+    len += snprintf(buf + len, buf_len - len, "{ \n  \"Router\": [  ");
     
     if (len == buf_len) {
         buf[len - 1] = '\0';
