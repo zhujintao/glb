@@ -872,14 +872,14 @@ glb_router_print_info (glb_router_t* router, char* buf, size_t buf_len)
         
         if (router_uses_map (router)) {
             len += snprintf (buf + len, buf_len - len,
-                             "{ \n\t\"address\": \"%s\", \"weight\": %8.3f, \"usage\": %7.3f, \"map\": %7.3f, \"conns\": %5d},\n",
+                             "{ \n\t\"address\": \"%s\", \"weight\": %8.3f, \"usage\": \"%7.3f\", \"map\": %7.3f, \"conns\": %5d},\n",
                              addr.str,
                              d->dst.weight, 1.0 - (d->usage/d->dst.weight),
                              d->map, d->conns);
         }
         else {
             len += snprintf (buf + len, buf_len - len,
-                             "{ \n\t\"address\": \"%s\", \"weight\": %8.3f, \"usage\": %7.3f, \"map\": null,  \"conns\": %5d},\n",
+                             "{ \n\t\"address\": \"%s\", \"weight\": %8.3f, \"usage\": \"%7.3f\", \"map\": null,  \"conns\": %5d},\n",
                              addr.str,
                              d->dst.weight, 1.0 - (d->usage/d->dst.weight),
                              d->conns);
